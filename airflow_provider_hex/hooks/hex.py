@@ -223,8 +223,8 @@ class HexHook(BaseHook):
             if project_status == COMPLETE and run_status["endTime"]:
                 break
 
-            if project_status == COMPLETE:
-                return run_status
+            # if project_status == COMPLETE:
+            #     return run_status
 
             if project_status in TERMINAL_STATUSES:
                 raise AirflowException(
