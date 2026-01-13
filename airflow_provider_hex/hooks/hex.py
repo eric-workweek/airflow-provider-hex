@@ -5,7 +5,7 @@ from urllib.parse import urljoin
 
 import requests
 from airflow.exceptions import AirflowException
-from airflow.hooks.base import BaseHook
+from airflow.sdk.bases.hook import BaseHook
 from importlib_metadata import PackageNotFoundError, version
 from requests.exceptions import RequestException
 from tenacity import retry, stop_after_attempt, wait_fixed
@@ -26,7 +26,7 @@ VALID_STATUSES = [
     UNABLE_TO_ALLOCATE_KERNEL,
     KILLED,
 ]
-TERMINAL_STATUSES = [COMPLETE, ERRORED, UNABLE_TO_ALLOCATE_KERNEL, KILLED]
+TERMINAL_STATUSES = [ERRORED, UNABLE_TO_ALLOCATE_KERNEL, KILLED]
 
 
 class HexHook(BaseHook):
@@ -113,6 +113,12 @@ class HexHook(BaseHook):
         self.log.info("Sending '%s' to url: %s", method, url)
         response = session.send(prepped_request)
         response.raise_for_status()
+
+        # raise_for_status doesn't provide enough detail on error payload in traceback
+        if response.status_code != requests.codes.ok:
+            self.log.error(
+                f"Received status code {response.status_code}: {response.text}"
+            )
 
         if response.headers.get("Content-Type", "").startswith("application/json"):
             try:
@@ -213,6 +219,9 @@ class HexHook(BaseHook):
             self.log.info(
                 f"Polling Hex Project {project_id}. Status: {project_status}."
             )
+
+            if project_status == COMPLETE and run_status["endTime"]:
+                break
 
             if project_status == COMPLETE:
                 return run_status
