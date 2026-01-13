@@ -26,7 +26,7 @@ VALID_STATUSES = [
     UNABLE_TO_ALLOCATE_KERNEL,
     KILLED,
 ]
-TERMINAL_STATUSES = [COMPLETE, ERRORED, UNABLE_TO_ALLOCATE_KERNEL, KILLED]
+TERMINAL_STATUSES = [ERRORED, UNABLE_TO_ALLOCATE_KERNEL, KILLED]
 
 
 class HexHook(BaseHook):
@@ -219,6 +219,9 @@ class HexHook(BaseHook):
             self.log.info(
                 f"Polling Hex Project {project_id}. Status: {project_status}."
             )
+
+            if project_status == COMPLETE and run_status["endTime"]:
+                break
 
             if project_status == COMPLETE:
                 return run_status
