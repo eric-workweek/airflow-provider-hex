@@ -1,8 +1,6 @@
 from typing import Any, Dict, List, Optional
 
 from airflow.models import BaseOperator
-from airflow.models.dag import Context
-from airflow.utils.decorators import apply_defaults
 
 from airflow_provider_hex.hooks.hex import HexHook
 from airflow_provider_hex.types import NotificationDetails
@@ -41,7 +39,6 @@ class HexRunProjectOperator(BaseOperator):
     template_fields = ["project_id", "input_parameters"]
     ui_color = "#F5C0C0"
 
-    @apply_defaults
     def __init__(
         self,
         project_id: str,
@@ -66,7 +63,7 @@ class HexRunProjectOperator(BaseOperator):
         self.update_cache = update_cache
         self.notifications = notifications
 
-    def execute(self, context: Context) -> Any:
+    def execute(self, context) -> Any:
         hook = HexHook(self.hex_conn_id)
 
         if self.synchronous:

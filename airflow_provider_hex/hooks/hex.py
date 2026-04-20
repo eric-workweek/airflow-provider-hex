@@ -5,7 +5,10 @@ from urllib.parse import urljoin
 
 import requests
 from airflow.exceptions import AirflowException
-from airflow.hooks.base import BaseHook
+try:
+    from airflow.sdk.bases.hook import BaseHook
+except ImportError:
+    from airflow.hooks.base import BaseHook
 from importlib_metadata import PackageNotFoundError, version
 from requests.exceptions import RequestException
 from tenacity import retry, stop_after_attempt, wait_fixed
