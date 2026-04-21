@@ -88,5 +88,5 @@ class HexRunProjectOperator(BaseOperator):
             )
             self.log.info("Hex Project started successfully.")
 
-        self.log.info(resp)
+        self.log.info("Hex response: %s", resp)
         return resp
