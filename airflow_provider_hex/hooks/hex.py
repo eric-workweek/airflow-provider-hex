@@ -114,7 +114,16 @@ class HexHook(BaseHook):
 
         prepped_request = session.prepare_request(req)
         self.log.info("Sending '%s' to url: %s", method, url)
-        response = session.send(prepped_request)
+
+        max_retries = 5
+        for attempt in range(max_retries):
+            response = session.send(prepped_request)
+            if response.status_code != 429:
+                break
+            wait = min(2 ** attempt * 5, 60)
+            self.log.warning("429 rate limited, retrying in %ds (attempt %d/%d)", wait, attempt + 1, max_retries)
+            time.sleep(wait)
+
         response.raise_for_status()
 
         # raise_for_status doesn't provide enough detail on error payload in traceback
