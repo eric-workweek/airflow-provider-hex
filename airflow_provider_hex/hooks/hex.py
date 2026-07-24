@@ -132,7 +132,7 @@ class HexHook(BaseHook):
         update_cache: bool = False,
         notifications: List[NotificationDetails] = [],
     ) -> RunResponse:
-        endpoint = f"/api/v1/project/{project_id}/run"
+        endpoint = f"/api/v1/projects/{project_id}/runs"
         method = "POST"
 
         data: Dict[str, Any] = {"updateCache": update_cache}
@@ -152,7 +152,7 @@ class HexHook(BaseHook):
         )
 
     def run_status(self, project_id, run_id) -> StatusResponse:
-        endpoint = f"api/v1/project/{project_id}/run/{run_id}"
+        endpoint = f"api/v1/projects/{project_id}/runs/{run_id}"
         method = "GET"
 
         return cast(
@@ -160,7 +160,7 @@ class HexHook(BaseHook):
         )
 
     def cancel_run(self, project_id, run_id) -> str:
-        endpoint = f"api/v1/project/{project_id}/run/{run_id}"
+        endpoint = f"api/v1/projects/{project_id}/runs/{run_id}"
         method = "DELETE"
 
         self.run(method=method, endpoint=endpoint)
